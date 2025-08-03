@@ -1,32 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
-  <title>Seating Viewer</title>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport" 
+    content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"
+  >
+  <title>Seating Plan</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
+      overflow: hidden;
     }
+
     .iframe-container {
+      width: 100vw;
       height: 100vh;
-      width: 100%;
-      overflow: auto;
+      overflow: scroll;
       -webkit-overflow-scrolling: touch;
     }
+
     iframe {
-      width: 100%;
+      width: 1200px; /* wider than screen so you can scroll and zoom */
       height: 100%;
       border: none;
+      transform-origin: 0 0;
     }
   </style>
 </head>
 <body>
   <div class="iframe-container">
     <iframe 
-      src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRFHaIx2b5iVhMcQiHN6Y5K694iwupZ-ciCKB2kNZGU_ogJRjjQGh_EaVbpZJNEuAkXDHUYIz6C5c49/pubhtml?gid=0&single=true"
+      src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRFHaIx2b5iVhMcQiHN6Y5K694iwupZ-ciCKB2kNZGU_ogJRjjQGh_EaVbpZJNEuAkXDHUYIz6C5c49/pubhtml?gid=0" 
       allowfullscreen>
     </iframe>
   </div>
