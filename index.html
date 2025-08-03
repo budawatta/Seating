@@ -1,195 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>RANSILU RANGANA - 2025 SEATING</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport" 
+    content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"
+  >
+  <title>Seating Viewer</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: #fff;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
 
-        body {
-            overflow: hidden;
-            height: 100vh;
-            width: 100vw;
-        }
+    .scroll-zoom {
+      width: 100%;
+      height: 100vh;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      touch-action: manipulation;
+    }
 
-        .container {
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            position: relative;
-            cursor: grab;
-        }
+    .scaled-iframe {
+      transform: scale(0.35);               /* Zoomed out more */
+      transform-origin: top left;
+      width: 285.7%;                        /* 1 / 0.35 = ~2.857 */
+      height: 3000px;                       /* More height to avoid cutting content */
+    }
 
-        .container:active {
-            cursor: grabbing;
-        }
-
-        .iframe-wrapper {
-            width: 100%;
-            height: 100%;
-            transform-origin: 0 0;
-            transition: transform 0.1s ease-out;
-        }
-
-        .sheet-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: white;
-        }
-    </style>
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
 </head>
 <body>
-    <div class="container" id="container">
-        <div class="iframe-wrapper" id="wrapper">
-            <iframe 
-                class="sheet-iframe" 
-                src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRFHaIx2b5iVhMcQiHN6Y5K694iwupZ-ciCKB2kNZGU_ogJRjjQGh_EaVbpZJNEuAkXDHUYIz6C5c49/pubhtml?gid=0&single=true">
-            </iframe>
-        </div>
+  <div class="scroll-zoom">
+    <div class="scaled-iframe">
+      <iframe 
+        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRFHaIx2b5iVhMcQiHN6Y5K694iwupZ-ciCKB2kNZGU_ogJRjjQGh_EaVbpZJNEuAkXDHUYIz6C5c49/pubhtml?widget=true&amp;headers=false" 
+        allowfullscreen>
+      </iframe>
     </div>
-
-    <script>
-        class SimpleSheetViewer {
-            constructor() {
-                this.scale = this.getOptimalInitialScale();
-                this.minScale = 0.2;
-                this.maxScale = 5;
-                this.isDragging = false;
-                this.lastX = 0;
-                this.lastY = 0;
-                this.translateX = 0;
-                this.translateY = 0;
-
-                this.wrapper = document.getElementById('wrapper');
-                this.container = document.getElementById('container');
-
-                this.initEventListeners();
-                this.setOptimalInitialView();
-            }
-
-            getOptimalInitialScale() {
-                const screenWidth = window.innerWidth;
-                
-                if (screenWidth < 480) {
-                    return 0.4;
-                } else if (screenWidth < 768) {
-                    return 0.6;
-                } else {
-                    return 0.8;
-                }
-            }
-
-            setOptimalInitialView() {
-                this.scale = this.getOptimalInitialScale();
-                this.translateX = 0;
-                this.translateY = 0;
-                this.updateTransform();
-            }
-
-            initEventListeners() {
-                // Touch and mouse events
-                this.container.addEventListener('mousedown', (e) => this.startDrag(e));
-                this.container.addEventListener('mousemove', (e) => this.drag(e));
-                this.container.addEventListener('mouseup', () => this.endDrag());
-                this.container.addEventListener('mouseleave', () => this.endDrag());
-
-                this.container.addEventListener('touchstart', (e) => this.handleTouchStart(e));
-                this.container.addEventListener('touchmove', (e) => this.handleTouchMove(e));
-                this.container.addEventListener('touchend', () => this.endDrag());
-
-                // Mouse wheel zoom
-                this.container.addEventListener('wheel', (e) => {
-                    e.preventDefault();
-                    const delta = e.deltaY > 0 ? 0.9 : 1.1;
-                    this.setScale(this.scale * delta);
-                });
-
-                // Prevent default behaviors
-                this.container.addEventListener('touchstart', (e) => {
-                    if (e.touches.length > 1) {
-                        e.preventDefault();
-                    }
-                });
-
-                this.container.addEventListener('touchmove', (e) => {
-                    if (e.touches.length > 1) {
-                        e.preventDefault();
-                    }
-                });
-            }
-
-            handleTouchStart(e) {
-                if (e.touches.length === 1) {
-                    this.startDrag(e.touches[0]);
-                } else if (e.touches.length === 2) {
-                    this.initialDistance = this.getDistance(e.touches[0], e.touches[1]);
-                    this.initialScale = this.scale;
-                    this.endDrag();
-                }
-            }
-
-            handleTouchMove(e) {
-                if (e.touches.length === 1) {
-                    this.drag(e.touches[0]);
-                } else if (e.touches.length === 2) {
-                    e.preventDefault();
-                    const currentDistance = this.getDistance(e.touches[0], e.touches[1]);
-                    const scaleChange = currentDistance / this.initialDistance;
-                    this.setScale(this.initialScale * scaleChange);
-                }
-            }
-
-            getDistance(touch1, touch2) {
-                const dx = touch1.clientX - touch2.clientX;
-                const dy = touch1.clientY - touch2.clientY;
-                return Math.sqrt(dx * dx + dy * dy);
-            }
-
-            startDrag(e) {
-                this.isDragging = true;
-                this.lastX = e.clientX;
-                this.lastY = e.clientY;
-            }
-
-            drag(e) {
-                if (!this.isDragging) return;
-
-                const deltaX = e.clientX - this.lastX;
-                const deltaY = e.clientY - this.lastY;
-
-                this.translateX += deltaX;
-                this.translateY += deltaY;
-
-                this.lastX = e.clientX;
-                this.lastY = e.clientY;
-
-                this.updateTransform();
-            }
-
-            endDrag() {
-                this.isDragging = false;
-            }
-
-            setScale(newScale) {
-                this.scale = Math.max(this.minScale, Math.min(this.maxScale, newScale));
-                this.updateTransform();
-            }
-
-            updateTransform() {
-                this.wrapper.style.transform = `translate(${this.translateX}px, ${this.translateY}px) scale(${this.scale})`;
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            new SimpleSheetViewer();
-        });
-    </script>
+  </div>
 </body>
 </html>
 
