@@ -2,38 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+  <meta 
+    name="viewport" 
+    content="width=device-width, initial-scale=1.0, maximum-scale=10.0, user-scalable=yes"
+  />
   <title>Seating Viewer</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
+      background: #000;
       height: 100%;
       width: 100%;
       overflow: hidden;
     }
 
-    .zoom-wrapper {
-      width: 100vw;
-      height: 100vh;
+    .scroll-zoom {
+      width: 100%;
+      height: 100%;
       overflow: auto;
       -webkit-overflow-scrolling: touch;
       touch-action: manipulation;
     }
 
+    .scaled-iframe {
+      transform: scale(0.45);  /* You can change this */
+      transform-origin: top left;
+      width: 222.22%;          /* 1 / 0.45 = 2.222 */
+      height: 2000px;          /* Prevent vertical cut-off */
+    }
+
     iframe {
-      min-width: 1200px; /* assume the sheet is wide */
-      height: 2000px;     /* increase to avoid vertical cutoff */
+      width: 100%;
+      height: 100%;
       border: none;
     }
   </style>
 </head>
 <body>
-  <div class="zoom-wrapper">
-    <iframe 
-      src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRFHaIx2b5iVhMcQiHN6Y5K694iwupZ-ciCKB2kNZGU_ogJRjjQGh_EaVbpZJNEuAkXDHUYIz6C5c49/pubhtml?gid=0"
-      allowfullscreen>
-    </iframe>
+  <div class="scroll-zoom">
+    <div class="scaled-iframe">
+      <iframe 
+        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRFHaIx2b5iVhMcQiHN6Y5K694iwupZ-ciCKB2kNZGU_ogJRjjQGh_EaVbpZJNEuAkXDHUYIz6C5c49/pubhtml?gid=0"
+        allowfullscreen>
+      </iframe>
+    </div>
   </div>
 </body>
 </html>
