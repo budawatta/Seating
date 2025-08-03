@@ -227,9 +227,9 @@
     <script>
         class GoogleSheetViewer {
             constructor() {
-                this.scale = 1;
-                this.minScale = 0.3;
-                this.maxScale = 3;
+                this.scale = this.getOptimalInitialScale();
+                this.minScale = 0.2;
+                this.maxScale = 4;
                 this.isDragging = false;
                 this.lastX = 0;
                 this.lastY = 0;
@@ -243,13 +243,37 @@
                 this.loadingOverlay = document.getElementById('loadingOverlay');
 
                 this.initEventListeners();
-                this.updateTransform();
+                this.setOptimalInitialView();
                 
                 this.iframe.addEventListener('load', () => {
                     setTimeout(() => {
                         this.loadingOverlay.style.display = 'none';
-                    }, 1000);
+                        // Re-apply optimal view after iframe loads
+                        this.setOptimalInitialView();
+                    }, 1500);
                 });
+            }
+
+            getOptimalInitialScale() {
+                const screenWidth = window.innerWidth;
+                const screenHeight = window.innerHeight;
+                
+                // Scale based on screen size for optimal seating chart viewing
+                if (screenWidth < 480) {
+                    return 0.4; // Mobile phones
+                } else if (screenWidth < 768) {
+                    return 0.6; // Tablets
+                } else {
+                    return 0.8; // Desktop
+                }
+            }
+
+            setOptimalInitialView() {
+                // Center the seating chart and optimize for full view
+                this.scale = this.getOptimalInitialScale();
+                this.translateX = 0;
+                this.translateY = 0;
+                this.updateTransform();
             }
 
             initEventListeners() {
@@ -349,10 +373,7 @@
             }
 
             resetZoom() {
-                this.scale = 1;
-                this.translateX = 0;
-                this.translateY = 0;
-                this.updateTransform();
+                this.setOptimalInitialView();
             }
 
             setScale(newScale) {
