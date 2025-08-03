@@ -1,48 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta 
-    name="viewport" 
-    content="width=device-width, initial-scale=1.0, user-scalable=yes"
-  >
-  <title>Seating Plan</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+  <title>Seating Viewer</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: auto;
+      width: 100%;
+      overflow: hidden;
     }
 
-    .iframe-wrapper {
-      width: 100%;
+    .zoom-wrapper {
+      width: 100vw;
+      height: 100vh;
       overflow: auto;
       -webkit-overflow-scrolling: touch;
-    }
-
-    .iframe-scale {
-      transform: scale(0.5); /* Adjust this to fit your full sheet preview */
-      transform-origin: top left;
-      width: 200%; /* Inverse of scale (1 / 0.5 = 2) */
-      height: 200vh; /* Prevent vertical cutoff */
+      touch-action: manipulation;
     }
 
     iframe {
-      width: 100%;
-      height: 100vh;
+      min-width: 1200px; /* assume the sheet is wide */
+      height: 2000px;     /* increase to avoid vertical cutoff */
       border: none;
     }
   </style>
 </head>
 <body>
-  <div class="iframe-wrapper">
-    <div class="iframe-scale">
-      <iframe 
-        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRFHaIx2b5iVhMcQiHN6Y5K694iwupZ-ciCKB2kNZGU_ogJRjjQGh_EaVbpZJNEuAkXDHUYIz6C5c49/pubhtml?gid=0"
-        allowfullscreen>
-      </iframe>
-    </div>
+  <div class="zoom-wrapper">
+    <iframe 
+      src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRFHaIx2b5iVhMcQiHN6Y5K694iwupZ-ciCKB2kNZGU_ogJRjjQGh_EaVbpZJNEuAkXDHUYIz6C5c49/pubhtml?gid=0"
+      allowfullscreen>
+    </iframe>
   </div>
 </body>
 </html>
